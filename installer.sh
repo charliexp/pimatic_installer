@@ -2,46 +2,107 @@
 clear
 echo "Start installation of pimatic"
 
-sudo apt-get install wget tar build-essentials -y
-cd /tmp
-sudo mkdir /installation_pimatic
-wget http://nodejs.org/dist/v0.10.24/node-v0.10.24-linux-arm-pi.tar.gz -P /tmp/installation_pimatic
-cd /usr/local
-sudo tar xzvf /tmp/installation_pimatic/node-v0.10.24-linux-arm-pi.tar.gz --strip=1
+# init
+DIRECTORY=/tmp/installation_pimatic
+INSTALL_LOG_FILE=/tmp/pimatic_installation.log
 
-echo " "
-echo "NodeJS Version:"
-/usr/bin/env node --version
+function install() {
+	start_install | tee $INSTALL_LOG_FILE
+}
 
-echo "Install pimatic"
-cd /home/pi
-sudo mkdir /home/pi/pimatic-app
-npm install pimatic --prefix pimatic-app --production
+function start_install() {
 
-echo "Link pimatic so can be start with: sudo pimatic.js"
-cd /home/pi/pimatic-app/node_modules/pimatic
-sudo npm link
+	echo "Start installation of pimatic"
+	create_log_file()
+	check_build_essentials()
+	prepare_install_dir()
+	install_nodeJS()
+	install_pimatic()
+	install_ssl()
+	cleanup_files()
+	config_ssl()
+}
 
-echo "Make a service pimatic"
-cd /tmp/installation_pimatic
-wget https://raw.github.com/pimatic/pimatic/master/install/pimatic-init-d
-sudo cp pimatic-init-d /etc/init.d/pimatic
-sudo chmod +x /etc/init.d/pimatic
-sudo chown root:root /etc/init.d/pimatic
-sudo update-rc.d pimatic defaults
+function create_log_file() {
+	if [ ! -f "$INSTALL_LOG_FILE" ]; then
+		echo "Create log file" $INSTALL_LOG_FILE
+		touch $INSTALL_LOG_FILE
+	fi
+}
 
-echo "Setup SSL cert"
-cd /home/pi/pimatic-app
-wget https://raw.githubusercontent.com/pimatic/pimatic/master/install/ssl-setup
-sudo chmod +x ./ssl-setup
-sudo ./ssl-setup
+function check_build_essentials() {
+	echo "Install wget | tar | build essentials "
+	sudo apt-get install wget tar build-essentials -y
+}
 
-cd /tmp/installation_pimatic
-wget https://raw.githubusercontent.com/xleeuwx/pimatic_installer/master/default_config.json
-cp /tmp/installation_pimatic/default_config.json /home/pi/pimatic-app/config.json
+function prepare_install_dir() {
+	if [ -d "$DIRECTORY" ]; then
+		echo "Directory already exists"
+	else
+		cd /tmp
+		sudo mkdir /installation_pimatic
+	fi
+}
 
-echo "Cleanup files"
-sudo rm -rf /tmp/installation_pimatic
+function install_nodeJS() {
+	versionNode=`/usr/bin/env node --version`
+	if($versionNode == "v0.10.24") then
+		echo "nodeJS installed with version: " $versionNode
+	else
+		echo "Installing nodeJS v0.10.24"
+		wget http://nodejs.org/dist/v0.10.24/node-v0.10.24-linux-arm-pi.tar.gz -P $DIRECTORY
+		cd /usr/local
+		sudo tar xzvf $DIRECTORY/node-v0.10.24-linux-arm-pi.tar.gz --strip=1
+	fi
+}
 
-echo "Start pimatic for the first time:"
-sudo service pimatic start
+function install_pimatic() {
+	echo "Install pimatic"
+	cd /home/pi
+	if [ ! -d "/home/pi/pimatic-app" ]; then
+		sudo mkdir /home/pi/pimatic-app
+		npm install pimatic --prefix pimatic-app --production
+
+		echo "Make a service pimatic"
+		cd $DIRECTORY
+		wget https://raw.github.com/pimatic/pimatic/master/install/pimatic-init-d
+		sudo cp pimatic-init-d /etc/init.d/pimatic
+		sudo chmod +x /etc/init.d/pimatic
+		sudo chown root:root /etc/init.d/pimatic
+		sudo update-rc.d pimatic defaults
+	else
+		echo "Pimatic already installed"
+	fi
+}
+
+function install_ssl() {
+	if [ ! -f "/home/pi/pimatic-app/config.json"]; then
+		echo "Setup SSL cert"
+		wget https://raw.githubusercontent.com/pimatic/pimatic/master/install/ssl-setup
+		sudo chmod +x ./ssl-setup
+
+		echo "Create default config"
+		cd $DIRECTORY
+		wget https://raw.githubusercontent.com/xleeuwx/pimatic_installer/master/default_config.json
+		cp /tmp/installation_pimatic/default_config.json /home/pi/pimatic-app/config.json
+	fi
+}
+
+function cleanup_files() {
+	if [ -d "$DIRECTORY" ]; then
+		echo "Cleanup install dir"
+		sudo rm -rf $DIRECTORY
+	fi
+}
+
+function start_pimatic() {
+	echo "Start pimatic for the first time:"
+	sudo service pimatic start
+}
+
+function config_ssl() {
+	cd /home/pi/pimatic-app
+	sudo ./ssl-setup
+}
+
+install()
