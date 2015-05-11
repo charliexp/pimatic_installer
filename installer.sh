@@ -1,6 +1,5 @@
 #!/bin/bash
 clear
-echo "Start installation of pimatic"
 
 # init
 DIRECTORY="/tmp/installation_pimatic"
