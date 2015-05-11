@@ -33,12 +33,12 @@ sudo update-rc.d pimatic defaults
 echo "Setup SSL cert"
 cd /home/pi/pimatic-app
 wget https://raw.githubusercontent.com/pimatic/pimatic/master/install/ssl-setup
-chmod +x ./ssl-setup
-./ssl-setup
+sudo chmod +x ./ssl-setup
+sudo ./ssl-setup
 
 cd /tmp/installation_pimatic
 wget https://raw.githubusercontent.com/xleeuwx/pimatic_installer/master/default_config.json
-cp sudo rm -rf /tmp/installation_pimatic/default_config.json /home/pi/pimatic-app/config.json
+cp /tmp/installation_pimatic/default_config.json /home/pi/pimatic-app/config.json
 
 echo "Cleanup files"
 sudo rm -rf /tmp/installation_pimatic
