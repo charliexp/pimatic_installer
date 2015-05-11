@@ -61,7 +61,8 @@ function install_pimatic() {
 	cd /home/pi
 	if [ ! -d "/home/pi/pimatic-app" ]; then
 		sudo mkdir /home/pi/pimatic-app
-		npm install pimatic --prefix pimatic-app --production
+		sudo npm install pimatic --prefix pimatic-app --production
+		sudo npm install pimatic-mobile-frontend
 
 		echo "Link pimatic to run it globally"
 		cd  /home/pi/pimatic-app/node_modules/pimatic
