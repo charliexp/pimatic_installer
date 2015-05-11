@@ -3,8 +3,8 @@ clear
 echo "Start installation of pimatic"
 
 # init
-DIRECTORY=/tmp/installation_pimatic
-INSTALL_LOG_FILE=/tmp/pimatic_installation.log
+DIRECTORY="/tmp/installation_pimatic"
+INSTALL_LOG_FILE="/tmp/pimatic_installation.log"
 
 function install() {
 	start_install | tee $INSTALL_LOG_FILE
@@ -13,14 +13,14 @@ function install() {
 function start_install() {
 
 	echo "Start installation of pimatic"
-	create_log_file()
-	check_build_essentials()
-	prepare_install_dir()
-	install_nodeJS()
-	install_pimatic()
-	install_ssl()
-	cleanup_files()
-	config_ssl()
+	create_log_file
+	check_build_essentials
+	prepare_install_dir
+	install_nodeJS
+	install_pimatic
+	install_ssl
+	cleanup_files
+	config_ssl
 }
 
 function create_log_file() {
@@ -45,9 +45,10 @@ function prepare_install_dir() {
 }
 
 function install_nodeJS() {
-	versionNode=`/usr/bin/env node --version`
-	if($versionNode == "v0.10.24") then
-		echo "nodeJS installed with version: " $versionNode
+	echo "Need nodeJS version:"
+	if(/usr/bin/env node --version == "v0.10.24") then
+		echo "nodeJS installed with version: "
+		/usr/bin/env node --version
 	else
 		echo "Installing nodeJS v0.10.24"
 		wget http://nodejs.org/dist/v0.10.24/node-v0.10.24-linux-arm-pi.tar.gz -P $DIRECTORY
@@ -76,7 +77,8 @@ function install_pimatic() {
 }
 
 function install_ssl() {
-	if [ ! -f "/home/pi/pimatic-app/config.json"]; then
+	if [ ! -f "/home/pi/pimatic-app/config.json"];
+	then
 		echo "Setup SSL cert"
 		wget https://raw.githubusercontent.com/pimatic/pimatic/master/install/ssl-setup
 		sudo chmod +x ./ssl-setup
@@ -105,4 +107,4 @@ function config_ssl() {
 	sudo ./ssl-setup
 }
 
-install()
+install
