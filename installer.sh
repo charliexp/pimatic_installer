@@ -63,6 +63,11 @@ function install_pimatic() {
 		sudo mkdir /home/pi/pimatic-app
 		npm install pimatic --prefix pimatic-app --production
 
+		echo "Link pimatic to run it globally"
+		cd  /home/pi/pimatic-app/node_modules/pimatic
+		sudo npm link
+
+
 		echo "Make a service pimatic"
 		cd $DIRECTORY
 		wget https://raw.github.com/pimatic/pimatic/master/install/pimatic-init-d
