@@ -31,8 +31,8 @@ function create_log_file() {
 }
 
 function check_build_essentials() {
-	echo "Install wget | tar | build essentials "
-	sudo apt-get install wget tar build-essentials -y
+	echo "Install wget | tar | build essential "
+	sudo apt-get install wget tar build-essential -y
 }
 
 function prepare_install_dir() {
