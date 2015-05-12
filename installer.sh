@@ -5,7 +5,7 @@ clear
 DIRECTORY="/tmp/installation_pimatic"
 INSTALL_LOG_FILE="/tmp/pimatic_installation.log"
 
-function install() {
+function pimatic_installer() {
 	start_install | tee $INSTALL_LOG_FILE
 }
 
@@ -82,8 +82,7 @@ function install_pimatic() {
 }
 
 function install_ssl() {
-	if [ ! -f "/home/pi/pimatic-app/config.json"];
-	then
+	if [ ! -f /home/pi/pimatic-app/config.json ]; then
 		echo "Setup SSL cert"
 		wget https://raw.githubusercontent.com/pimatic/pimatic/master/install/ssl-setup
 		sudo chmod +x ./ssl-setup
@@ -112,4 +111,4 @@ function config_ssl() {
 	sudo ./ssl-setup
 }
 
-install
+pimatic_installer
