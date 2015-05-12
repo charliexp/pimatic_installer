@@ -17,7 +17,8 @@ function start_install() {
 	prepare_install_dir
 	install_nodeJS
 	install_pimatic
-	install_ssl
+# TODO create a .sh file to automate to create ssl cert.
+#	install_ssl
 	cleanup_files
 	config_ssl
 }
