@@ -13,7 +13,7 @@ function start_install() {
 
 	echo "Start installation of pimatic"
 	create_log_file
-	check_build_essentials
+	check_dependencies
 	prepare_install_dir
 	install_nodeJS
 	install_pimatic
@@ -30,8 +30,8 @@ function create_log_file() {
 	fi
 }
 
-function check_build_essentials() {
-	echo "Install wget | tar | build essential "
+function check_dependencies() {
+	echo "Install dependencies: wget | tar | build essential "
 	sudo apt-get install wget tar build-essential -y
 }
 
