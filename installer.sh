@@ -60,7 +60,7 @@ function install_nodeJS() {
 
 function install_pimatic() {
 	echo "Install pimatic"
-	if [ ! -d "$INSTALL_DIR ]; then
+	if [ ! -d "$INSTALL_DIR" ]; then
 		sudo mkdir $INSTALL_DIR
 		cd $INSTALL_DIR
 		sudo npm install pimatic --prefix pimatic-app --production
