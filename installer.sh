@@ -4,6 +4,7 @@ clear
 # init
 DIRECTORY="/tmp/installation_pimatic"
 INSTALL_LOG_FILE="/tmp/pimatic_installation.log"
+INSTALL_DIR="/home/pi/pimatic-app/"
 
 function pimatic_installer() {
 	start_install | tee $INSTALL_LOG_FILE
@@ -20,7 +21,7 @@ function start_install() {
 # TODO create a .sh file to automate to create ssl cert.
 #	install_ssl
 	cleanup_files
-	config_ssl
+#	config_ssl
 }
 
 function create_log_file() {
@@ -59,14 +60,14 @@ function install_nodeJS() {
 
 function install_pimatic() {
 	echo "Install pimatic"
-	cd /home/pi
-	if [ ! -d "/home/pi/pimatic-app" ]; then
-		sudo mkdir /home/pi/pimatic-app
+	if [ ! -d "$INSTALL_DIR ]; then
+		sudo mkdir $INSTALL_DIR
+		cd $INSTALL_DIR
 		sudo npm install pimatic --prefix pimatic-app --production
 		sudo npm install pimatic-mobile-frontend
 
 		echo "Link pimatic to run it globally"
-		cd  /home/pi/pimatic-app/node_modules/pimatic
+		cd  node_modules/pimatic
 		sudo npm link
 
 
@@ -108,7 +109,7 @@ function start_pimatic() {
 }
 
 function config_ssl() {
-	cd /home/pi/pimatic-app
+	cd $INSTALL_DIR
 	sudo ./ssl-setup
 }
 
