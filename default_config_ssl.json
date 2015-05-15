@@ -6,7 +6,15 @@
       "port": 80
     },
     "database": {
-    }
+    },
+	"httpsServer": {
+		"enabled": true,
+		"port": 443,
+		"hostname": "",
+		"keyFile": "ca/pimatic-ssl/private/privkey.pem",
+		"certFile": "ca/pimatic-ssl/public/cert.pem",
+		"rootCertFile": "ca/certs/cacert.crt"
+	},
   },
   "plugins": [
     {

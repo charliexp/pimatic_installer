@@ -32,16 +32,15 @@ function create_log_file() {
 }
 
 function check_dependencies() {
-	echo "Install dependencies: wget | tar | build essential "
-	sudo apt-get install wget tar build-essential -y
+	echo "Install dependencies: wget | tar | build essential | ntp | ntpdate | samba "
+	sudo apt-get install wget tar build-essential ntp ntpdate samba samba-client samba-commen-bin -y
 }
 
 function prepare_install_dir() {
 	if [ -d "$DIRECTORY" ]; then
 		echo "Directory already exists"
 	else
-		cd /tmp
-		sudo mkdir /installation_pimatic
+		sudo mkdir $DIRECTORY
 	fi
 }
 
@@ -54,7 +53,7 @@ function install_nodeJS() {
 		echo "Installing nodeJS v0.10.24"
 		wget http://nodejs.org/dist/v0.10.24/node-v0.10.24-linux-arm-pi.tar.gz -P $DIRECTORY
 		cd /usr/local
-		sudo tar xzvf $DIRECTORY/node-v0.10.24-linux-arm-pi.tar.gz --strip=1
+		sudo tar xzvf "$DIRECTORY/node-v0.10.24-linux-arm-pi.tar.gz" --strip=1
 	fi
 }
 
@@ -62,22 +61,25 @@ function install_pimatic() {
 	echo "Install pimatic"
 	if [ ! -d "$INSTALL_DIR" ]; then
 		sudo mkdir $INSTALL_DIR
-		cd $INSTALL_DIR
 		sudo npm install pimatic --prefix pimatic-app --production
-		sudo npm install pimatic-mobile-frontend
 
 		echo "Link pimatic to run it globally"
-		cd  node_modules/pimatic
+		cd  "$INSTALL_DIRnode_modules/pimatic"
 		sudo npm link
 
 
 		echo "Make a service pimatic"
 		cd $DIRECTORY
-		wget https://raw.github.com/pimatic/pimatic/master/install/pimatic-init-d
+		wget https://raw.github.com/pimatic/pimatic/master/install/pimatic-init-d -P $DIRECTORY
 		sudo cp pimatic-init-d /etc/init.d/pimatic
 		sudo chmod +x /etc/init.d/pimatic
 		sudo chown root:root /etc/init.d/pimatic
 		sudo update-rc.d pimatic defaults
+
+		echo "Copy default_config.json to config.json"
+		cd $DIRECTORY
+		wget https://raw.githubusercontent.com/xleeuwx/pimatic_installer/master/default_config_ssl.json
+		sudo cp $DIRECTORYdefault_config.json "$INSTALL_DIRconfig.json"
 	else
 		echo "Pimatic already installed"
 	fi
@@ -91,7 +93,7 @@ function install_ssl() {
 
 		echo "Create default config"
 		cd $DIRECTORY
-		wget https://raw.githubusercontent.com/xleeuwx/pimatic_installer/master/default_config.json
+		wget https://raw.githubusercontent.com/xleeuwx/pimatic_installer/master/default_config_ssl.json
 		cp /tmp/installation_pimatic/default_config.json /home/pi/pimatic-app/config.json
 	fi
 }
