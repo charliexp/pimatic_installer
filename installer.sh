@@ -2,12 +2,8 @@
 clear
 
 # init
-DIRECTORY="/tmp/installation_pimatic"
-INSTALL_LOG_FILE="/tmp/pimatic_installation.log"
-INSTALL_DIR="/home/pi/pimatic-app/"
-
 function pimatic_installer() {
-	start_install | tee $INSTALL_LOG_FILE
+	start_install | tee /tmp/pimatic_installation.log
 }
 
 function start_install() {
@@ -25,9 +21,9 @@ function start_install() {
 }
 
 function create_log_file() {
-	if [ ! -f "$INSTALL_LOG_FILE" ]; then
-		echo "Create log file" $INSTALL_LOG_FILE
-		sudo touch $INSTALL_LOG_FILE
+	if [ ! -f "/tmp/pimatic_installation.log" ]; then
+		echo "Create log file" /tmp/pimatic_installation.log
+		sudo touch /tmp/pimatic_installation.log
 	fi
 }
 
@@ -37,10 +33,10 @@ function check_dependencies() {
 }
 
 function prepare_install_dir() {
-	if [ -d "$DIRECTORY" ]; then
+	if [ -d "/tmp/installation_pimatic" ]; then
 		echo "Directory already exists"
 	else
-		sudo mkdir $DIRECTORY
+		sudo mkdir /tmp/installation_pimatic
 	fi
 }
 
@@ -51,35 +47,35 @@ function install_nodeJS() {
 		/usr/bin/env node --version
 	else
 		echo "Installing nodeJS v0.10.24"
-		sudo wget http://nodejs.org/dist/v0.10.24/node-v0.10.24-linux-arm-pi.tar.gz -P $DIRECTORY
+		sudo wget http://nodejs.org/dist/v0.10.24/node-v0.10.24-linux-arm-pi.tar.gz -P /tmp/installation_pimatic
 		cd /usr/local
-		sudo tar xzvf "$DIRECTORY/node-v0.10.24-linux-arm-pi.tar.gz" --strip=1
+		sudo tar xzvf /tmp/installation_pimatic/node-v0.10.24-linux-arm-pi.tar.gz --strip=1
 	fi
 }
 
 function install_pimatic() {
 	echo "Install pimatic"
-	if [ ! -d "$INSTALL_DIR" ]; then
-		sudo mkdir $INSTALL_DIR
+	if [ ! -d "/home/pi/pimatic-app/" ]; then
+		sudo mkdir /home/pi/pimatic-app/
 		sudo npm install pimatic --prefix pimatic-app --production
 
 		echo "Link pimatic to run it globally"
-		cd  "$INSTALL_DIRnode_modules/pimatic"
+		cd  "/home/pi/pimatic-app/node_modules/pimatic"
 		sudo npm link
 
 
 		echo "Make a service pimatic"
-		cd $DIRECTORY
-		sudo wget https://raw.github.com/pimatic/pimatic/master/install/pimatic-init-d -P $DIRECTORY
+		cd /tmp/installation_pimatic
+		sudo wget https://raw.github.com/pimatic/pimatic/master/install/pimatic-init-d -P /tmp/installation_pimatic
 		sudo cp pimatic-init-d /etc/init.d/pimatic
 		sudo chmod +x /etc/init.d/pimatic
 		sudo chown root:root /etc/init.d/pimatic
 		sudo update-rc.d pimatic defaults
 
 		echo "Copy default_config.json to config.json"
-		cd $DIRECTORY
+		cd /tmp/installation_pimatic
 		sudo wget https://raw.githubusercontent.com/xleeuwx/pimatic_installer/master/default_config_ssl.json
-		sudo cp $DIRECTORYdefault_config.json "$INSTALL_DIRconfig.json"
+		sudo cp /tmp/installation_pimaticdefault_config.json "/home/pi/pimatic-app/config.json"
 	else
 		echo "Pimatic already installed"
 	fi
@@ -92,16 +88,16 @@ function install_ssl() {
 		sudo chmod +x ./ssl-setup
 
 		echo "Create default config"
-		cd $DIRECTORY
+		cd /tmp/installation_pimatic
 		sudo wget https://raw.githubusercontent.com/xleeuwx/pimatic_installer/master/default_config_ssl.json
 		sudo cp /tmp/installation_pimatic/default_config.json /home/pi/pimatic-app/config.json
 	fi
 }
 
 function cleanup_files() {
-	if [ -d "$DIRECTORY" ]; then
+	if [ -d "/tmp/installation_pimatic" ]; then
 		echo "Cleanup install dir"
-		sudo rm -rf $DIRECTORY
+		sudo rm -rf /tmp/installation_pimatic
 	fi
 }
 
@@ -111,7 +107,7 @@ function start_pimatic() {
 }
 
 function config_ssl() {
-	cd $INSTALL_DIR
+	cd /home/pi/pimatic-app/
 	sudo ./ssl-setup
 }
 
