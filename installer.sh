@@ -74,8 +74,8 @@ function install_pimatic() {
 
 		echo "Copy default_config.json to config.json"
 		cd /tmp/installation_pimatic
-		sudo wget https://raw.githubusercontent.com/xleeuwx/pimatic_installer/master/default_config_ssl.json
-		sudo cp /tmp/installation_pimaticdefault_config.json "/home/pi/pimatic-app/config.json"
+		sudo wget https://raw.githubusercontent.com/xleeuwx/pimatic_installer/master/default_config.json
+		sudo cp /tmp/installation_pimatic/default_config.json "/home/pi/pimatic-app/config.json"
 	else
 		echo "Pimatic already installed"
 	fi
