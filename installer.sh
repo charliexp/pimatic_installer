@@ -27,7 +27,7 @@ function start_install() {
 function create_log_file() {
 	if [ ! -f "$INSTALL_LOG_FILE" ]; then
 		echo "Create log file" $INSTALL_LOG_FILE
-		touch $INSTALL_LOG_FILE
+		sudo touch $INSTALL_LOG_FILE
 	fi
 }
 
@@ -51,7 +51,7 @@ function install_nodeJS() {
 		/usr/bin/env node --version
 	else
 		echo "Installing nodeJS v0.10.24"
-		wget http://nodejs.org/dist/v0.10.24/node-v0.10.24-linux-arm-pi.tar.gz -P $DIRECTORY
+		sudo wget http://nodejs.org/dist/v0.10.24/node-v0.10.24-linux-arm-pi.tar.gz -P $DIRECTORY
 		cd /usr/local
 		sudo tar xzvf "$DIRECTORY/node-v0.10.24-linux-arm-pi.tar.gz" --strip=1
 	fi
@@ -70,7 +70,7 @@ function install_pimatic() {
 
 		echo "Make a service pimatic"
 		cd $DIRECTORY
-		wget https://raw.github.com/pimatic/pimatic/master/install/pimatic-init-d -P $DIRECTORY
+		sudo wget https://raw.github.com/pimatic/pimatic/master/install/pimatic-init-d -P $DIRECTORY
 		sudo cp pimatic-init-d /etc/init.d/pimatic
 		sudo chmod +x /etc/init.d/pimatic
 		sudo chown root:root /etc/init.d/pimatic
@@ -78,7 +78,7 @@ function install_pimatic() {
 
 		echo "Copy default_config.json to config.json"
 		cd $DIRECTORY
-		wget https://raw.githubusercontent.com/xleeuwx/pimatic_installer/master/default_config_ssl.json
+		sudo wget https://raw.githubusercontent.com/xleeuwx/pimatic_installer/master/default_config_ssl.json
 		sudo cp $DIRECTORYdefault_config.json "$INSTALL_DIRconfig.json"
 	else
 		echo "Pimatic already installed"
@@ -88,13 +88,13 @@ function install_pimatic() {
 function install_ssl() {
 	if [ ! -f /home/pi/pimatic-app/config.json ]; then
 		echo "Setup SSL cert"
-		wget https://raw.githubusercontent.com/pimatic/pimatic/master/install/ssl-setup
+		sudo wget https://raw.githubusercontent.com/pimatic/pimatic/master/install/ssl-setup
 		sudo chmod +x ./ssl-setup
 
 		echo "Create default config"
 		cd $DIRECTORY
-		wget https://raw.githubusercontent.com/xleeuwx/pimatic_installer/master/default_config_ssl.json
-		cp /tmp/installation_pimatic/default_config.json /home/pi/pimatic-app/config.json
+		sudo wget https://raw.githubusercontent.com/xleeuwx/pimatic_installer/master/default_config_ssl.json
+		sudo cp /tmp/installation_pimatic/default_config.json /home/pi/pimatic-app/config.json
 	fi
 }
 
