@@ -3,7 +3,7 @@ clear
 
 # init
 function pimatic_installer() {
-	start_install | tee /tmp/pimatic_installation.log
+	sudo start_install | tee /tmp/pimatic_installation.log
 }
 
 function start_install() {
